@@ -46,7 +46,7 @@ So the real choice is which scheduler you already run.
 | Install HAMi as well | n/a | no | no |
 | Gang scheduling and queues | no | yes | yes |
 | Non-NVIDIA devices | yes, see [Device supported by HAMi](../userguide/device-supported.md) | NVIDIA only, Ascend goes through the separate [Volcano vNPU](../installation/how-to-use-volcano-ascend.md) integration | NVIDIA |
-| Requires | HAMi v2.x | Volcano later than v1.9 | KAI v0.16.4 or later |
+| Requires | HAMi v2.x | Volcano v1.9 or later | KAI v0.16.4 or later |
 | Guide | [Deploy HAMi using Helm](./deploy-with-helm.md) | [Use Volcano vGPU](../userguide/volcano-vgpu/nvidia-gpu/how-to-use-volcano-vgpu.md) | [Use KAI Scheduler with HAMi](../userguide/kai-scheduler/how-to-use-kai-scheduler.md) |
 
 A short way to decide:
