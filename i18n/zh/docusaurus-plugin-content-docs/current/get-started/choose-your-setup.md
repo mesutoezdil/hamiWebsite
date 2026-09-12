@@ -47,7 +47,7 @@ HAMi 有不止一种形态，旁边还有另外两个项目。本页回答大家
 | 是否还要装 HAMi | 不适用 | 否 | 否 |
 | Gang 调度与队列 | 否 | 是 | 是 |
 | 非 NVIDIA 设备 | 支持，见 [HAMi 支持的设备](../userguide/device-supported.md) | 仅 NVIDIA，Ascend 走独立的 [Volcano vNPU](../installation/how-to-use-volcano-ascend.md) 集成 | NVIDIA |
-| 版本要求 | HAMi v2.x | 高于 Volcano v1.9 | KAI v0.16.4 或更高 |
+| 版本要求 | HAMi v2.x | Volcano v1.9 或更高 | KAI v0.16.4 或更高 |
 | 指南 | [使用 Helm 部署 HAMi](./deploy-with-helm.md) | [使用 Volcano vGPU](../userguide/volcano-vgpu/nvidia-gpu/how-to-use-volcano-vgpu.md) | [配合 HAMi 使用 KAI Scheduler](../userguide/kai-scheduler/how-to-use-kai-scheduler.md) |
 
 简单的判断方式：
