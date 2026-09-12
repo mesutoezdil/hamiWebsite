@@ -38,3 +38,36 @@ Since system clock on scheduler node and 'device' node may not align properly, s
 ```text
 hami.io/node-handshake-{device-type}: Requesting_{scheduler_node_current_timestamp}
 ```
+
+## Task Dispatch & Scheduling Decisions
+
+During the `bind` process, `kube-scheduler` binds the Pod to the target node. During container creation, `kubelet` invokes the device plugin's `Allocate` method to mount the device, but only provides the device `UUID`. In GPU sharing scenarios, the device plugin cannot natively obtain the workload's requested device specifications, such as GPU memory and compute core limits.
+
+Therefore, HAMi uses a protocol for the scheduler to communicate task allocation metadata to the device plugin. The scheduler passes this information by patching allocation annotations onto the Pod, which the device plugin reads during container setup, as shown below:
+
+<img src="/img/docs/common/developers/protocol/task-dispatch.png" width="600px" alt="HAMi task dispatch protocol diagram showing scheduler and device-plugin interaction" />
+
+During this process, the following annotations are managed on the Pod:
+
+- `hami.io/bind-phase`: Tracks allocation progress. The scheduler sets this to `allocating` during bind, and the device plugin updates it to `success` (or `failed`) once allocation finishes. This serves as the completion signal.
+- `hami.io/bind-time`: Timestamp when the scheduler initiated the binding process.
+- `hami.io/vgpu-node`: The target node assigned by the scheduler, used by the device plugin to identify the pending Pod on the node.
+- `hami.io/vgpu-devices-allocated`: The devices and specifications allocated by the scheduler.
+- `hami.io/vgpu-devices-to-allocate`: The devices pending allocation. When the scheduler prepares the Pod for binding, this annotation contains the target devices. During container setup, the device plugin allocates devices and incrementally removes them. Once all devices are allocated, this annotation becomes empty.
+
+For example, when a GPU task requesting 3000 MiB of device memory is dispatched, the scheduler sets the annotations to:
+
+```yaml
+hami.io/bind-phase: "allocating"
+hami.io/bind-time: "1716199325"
+hami.io/vgpu-node: "node-1"
+hami.io/vgpu-devices-allocated: GPU-0fc3eda5-e98b-a25b-5b0d-cf5c855d1448,NVIDIA,3000,0:;
+hami.io/vgpu-devices-to-allocate: GPU-0fc3eda5-e98b-a25b-5b0d-cf5c855d1448,NVIDIA,3000,0:;
+```
+
+Once the device plugin completes allocation, `hami.io/bind-phase` transitions to `success` and `hami.io/vgpu-devices-to-allocate` is cleared:
+
+```yaml
+hami.io/bind-phase: "success"
+hami.io/vgpu-devices-to-allocate: ;
+```
